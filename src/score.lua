@@ -1,4 +1,5 @@
 local Object = Object or require "lib.classic"
+local Score = Object:extend()
 local w, h = love.graphics.getDimensions()
 local credits = 0
 local loadedCredits = 0
