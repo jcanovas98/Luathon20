@@ -4,7 +4,7 @@ local credits = 0
 local loadedCredits = 0
 local file = io.open("savegame.txt", "r+")
 
-function Score:new(last)
+function Score:new()
   io.input(file)
 end
 
