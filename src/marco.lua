@@ -5,9 +5,9 @@ local Explosion = Explosion or require "src/explosion"
 local Marco = Object:extend()
 local w, h = love.graphics.getDimensions()
 local timeRot = 3--= 4
-local time = 500
-local expTime = 0.5
-local laserDelay = 0.5
+local time = 3.5
+local expTime = 0.3
+local laserDelay = 0.3
 
 
 function Marco:new(image,x,y,scale)
@@ -16,8 +16,8 @@ function Marco:new(image,x,y,scale)
   self.scale = Vector.new(1,1)
   self.image = love.graphics.newImage(image or nil)
   self.origin = Vector.new(self.image:getWidth()/2 ,self.image:getHeight()/2)
-  self.height = self.image:getHeight()
-  self.width  = self.image:getWidth()
+  self.height = self.image:getHeight() * scale
+  self.width  = self.image:getWidth() * scale
   self.rot = 0
   self.imageOut = love.graphics.newImage("spr/marco_boca_abierta_con_bordes.png")
   self.lasers = nil 
@@ -32,12 +32,12 @@ function Marco:new(image,x,y,scale)
   self.exploding = false
   self.laserX = 0
   self.laserY = 0
+  self.laserShoots = 0
 end
 
-function Marco:update(dt, actorList)
+function Marco:update(dt, actorList, hud)
   if self.timer < timeRot  then
     self.lasers = nil 
-    self.mouthTimer = 0
     self.closeMouth = true
     self.spawnLaser = true
     self.laserDone = 0
@@ -46,6 +46,8 @@ function Marco:update(dt, actorList)
     self.exploding = false
     self.laserX = 0
     self.laserY = 0
+    math.randomseed(os.time())
+    self.laserShoots = math.random(3, 6)
   
     self.rot = self.rot + math.rad(720/timeRot) * dt
     if self.mouthTimer > 0.3 then
@@ -66,7 +68,7 @@ function Marco:update(dt, actorList)
         end
         self.laserDone = self.laserDone + 1
         
-        table.insert(actorList, Explosion(self.laserX, self.laserY, 400, 400, expTime))
+        table.insert(actorList, Explosion("spr/logo.png",self.laserX, self.laserY, 400, 400, expTime, 2.5))
         
         self.expTimer = 0
         self.exploding = true
@@ -76,6 +78,7 @@ function Marco:update(dt, actorList)
         for _,v in ipairs(actorList) do
           if v.tag == "explosion" then
             table.remove(actorList, _)
+            hud.score = hud.score + 50
           end
         end
         self.exploding = false
@@ -84,7 +87,7 @@ function Marco:update(dt, actorList)
         self.lasers = nil
       end
       
-      if self.laserDone == 3 and not self.exploding then 
+      if self.laserDone == self.laserShoots and not self.exploding then 
         self.timer = 0
         self.laserDone = 0
         self.closeMouth = true
@@ -108,11 +111,13 @@ function Marco:update(dt, actorList)
   end
   if self.spawnLaser and self.timer > timeRot then
     math.randomseed(os.time())
-    for i = 1, math.random(10) do
-      math.random()
+
+    for _,v in ipairs(actorList) do
+      if v.tag == "player" then
+        self.laserX = v.position.x
+        self.laserY = v.position.y
+      end
     end
-    self.laserX = self.position.x + math.random(-w/2, w/2)
-    self.laserY = self.position.y + math.random(100, h/2)
     self.lasers = Lasers(self.position.x, self.position.y, self.laserX, self.laserY, time)
     table.insert(actorList, self.lasers)
     self.spawnLaser = false

@@ -2,8 +2,10 @@ local Object = Object or require "lib.classic"
 local Vector = Vector or require "src/vector"
 local Hud = Object:extend()
 local w, h = love.graphics.getDimensions(5)
+local file = io.open("savegame.txt", "r+")
 
 function Hud:new(health)
+  io.input(file)
   self.heartList = {}
   self.health = health
   self.lastHealth = health
@@ -28,6 +30,20 @@ function Hud:draw()
   love.graphics.setColor(1, 0.8, 0)
   love.graphics.print(math.floor(self.score), w - 400, 40 ,0,1,1)
   love.graphics.setColor(1, 1, 1)
+end
+
+function Hud:loadCredits() --Loads player credits from a txt file
+  self.loadedCredits = io.read()
+end
+
+function Hud:increaseCredits(moarCredits)
+  self.credits = self.credits + moarCredits --Increases player credits by input
+end
+
+function Hud:saveCredits() --Saves player credits on a txt file
+  if self.credits > self.loadedCredits then
+    io.write(self.credits)
+  end
 end
 
 return Hud

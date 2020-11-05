@@ -1,6 +1,5 @@
 local Object = Object or require "lib.classic"
 local Vector = Vector or require "src/vector"
-local Blast = Blast or require "src/blastW"
 require "data"
 local w, h = love.graphics.getDimensions()
 

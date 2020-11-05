@@ -21,7 +21,7 @@ end
 
 function Lasers:update(dt)
   if self.dist < self.yf then
-    self.dist = self.dist + self.speed
+    self.dist = self.dist + self.speed * dt
   else
     self.done = true
   end
