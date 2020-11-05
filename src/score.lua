@@ -26,7 +26,9 @@ function Score:increaseCredits(moarCredits)
 end
 
 function Score:saveCredits() --Saves player credits on a txt file
-  io.write(self.credits)
+  if self.credits > self.loadedCredits then
+    io.write(self.credits)
+  end
 end
 
 return Score
