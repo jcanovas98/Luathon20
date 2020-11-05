@@ -1,7 +1,9 @@
 local Object = Object or require "lib.classic"
 local Audio = Audio or require "src/audio"
+local Vector = Vector or require "src/vector"
 local Menu = Object:extend()
 local w, h = love.graphics.getDimensions()
+local timeRot = 3
 local buttons = {}
 local font
 local audio = Audio()
@@ -12,10 +14,48 @@ function Menu:new()
   table.insert(buttons, Menu:newButton("Scoreboard", function() print("Checking score") end))
   table.insert(buttons, Menu:newButton("Exit", function() love.event.quit(0) end))
   menuTrack = audio:getMenuTrack()
+  
+  self.tag = "marco"
+  self.position = Vector.new(w/2 or 0, h-100 or 0)
+  self.scale = Vector.new(1/2,1/2)
+  self.image = love.graphics.newImage("spr/marco_con_borde_def.png")
+  self.origin = Vector.new(self.image:getWidth()/2 ,self.image:getHeight()/2)
+  self.height = self.image:getHeight()
+  self.width  = self.image:getWidth()
+  self.rot = 0
+  self.imageOut = love.graphics.newImage("spr/marco_boca_abierta_con_bordes.png")
+  
+  self.timer = 0
+  self.mouthTimer = 0
+  self.closeMouth = true
 end
 
 function Menu:update(dt)
    menuTrack:play()
+   
+  if self.timer < timeRot  then
+    self.rot = self.rot + math.rad(720/timeRot) * dt
+    if self.mouthTimer > 0.3 then
+      i = self.image
+      self.image = self.imageOut
+      self.imageOut = i
+      self.mouthTimer = 0
+    end
+    self.mouthTimer = self.mouthTimer + dt
+    
+  elseif not self.closeMouth then
+      self.timer = 0
+      self.closeMouth = true
+  end
+  
+  if self.closeMouth and self.timer > timeRot then
+    self.image = love.graphics.newImage("spr/marco_con_borde_def.png")
+    self.imageOut = love.graphics.newImage("spr/marco_boca_abierta_con_bordes.png")
+    self.rot = 0
+    self.closeMouth = false
+    self.spawnLaser = true
+  end
+  self.timer = self.timer + dt
 end
 
 function Menu:draw()
@@ -24,6 +64,8 @@ function Menu:draw()
   love.graphics.setColor(0.9, 0.9, 0.8)
   love.graphics.polygon('fill', 0, -10, w/2 - minW/2, h/2, w/2 - minW/2, h/2 + minH/2, 0, h + 10)
   love.graphics.polygon('fill', w, -10, w/2 + minW/2, h/2, w/2 + minW/2, h/2 + minH/2, w, h + 10)
+  
+  
   
   love.graphics.setColor(0, 0, 0, 1)
   font = love.graphics.newFont("pong.ttf", 90)
@@ -71,6 +113,8 @@ function Menu:draw()
     
     y = y + (buttonH + margin)
   end
+  love.graphics.setColor(0.8, 0.8, 0.9, 1.0)
+  love.graphics.draw(self.image, self.position.x, self.position.y, self.rot, self.iscale, self.iscale, self.origin.x, self.origin.y)
 end
 
 function Menu:newButton(text, f)
