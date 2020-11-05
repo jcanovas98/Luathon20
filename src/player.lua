@@ -88,11 +88,6 @@ function Player:draw()
   yI = self.position.y
   xF =  xI * minW / w + w/2 - minW/2
   yF = (yI - h/2) * minH / (h/2) + (h/2 - minH)
-  if debug then
-    love.graphics.setLineWidth(1)
-    love.graphics.setColor(0.5, 0, 0)
-    love.graphics.line(xI, yI, xF, yF)
-  end
   love.graphics.setColor(1, 1, 1)
   love.graphics.draw(self.image, self.position.x, self.position.y, 0, self.iscale, self.iscale, self.origin.x, self.origin.y)
 end

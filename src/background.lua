@@ -46,7 +46,8 @@ function Background:draw()
   love.graphics.setColor(1, 1, 1)
   love.graphics.rectangle("fill", 0, 0, w, h)
   love.graphics.setColor(0.9, 0.9, 0.8)
-  love.graphics.polygon('fill', 0, 0, w/2 - minW/2, h/2, 0, h)
+  love.graphics.polygon('fill', 0, -10, w/2 - minW/2, h/2, w/2 - minW/2, h/2 + minH/2, 0, h + 10)
+  love.graphics.polygon('fill', w, -10, w/2 + minW/2, h/2, w/2 + minW/2, h/2 + minH/2, w, h + 10)
   
   --width of the line depending distance/height
   lineWidth = 14
