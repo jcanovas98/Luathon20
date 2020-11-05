@@ -8,15 +8,17 @@ local buttons = {}
 local font
 local audio = Audio()
 
+local startGame = false
+
 
 function Menu:new()
-  table.insert(buttons, Menu:newButton("Start Game", function() print("Starting game") end))
-  table.insert(buttons, Menu:newButton("Scoreboard", function() print("Checking score") end))
+  table.insert(buttons, Menu:newButton("Start Game", function() startGame = true end))
+  --table.insert(buttons, Menu:newButton("Scoreboard", function() print("Checking score") end))
   table.insert(buttons, Menu:newButton("Exit", function() love.event.quit(0) end))
-  menuTrack = audio:getMenuTrack()
+  clickSound = audio:getClick()
   
   self.tag = "marco"
-  self.position = Vector.new(w/2 or 0, h-100 or 0)
+  self.position = Vector.new(w/2 or 0, h-140 or 0)
   self.scale = Vector.new(1/2,1/2)
   self.image = love.graphics.newImage("spr/marco_con_borde_def.png")
   self.origin = Vector.new(self.image:getWidth()/2 ,self.image:getHeight()/2)
@@ -56,6 +58,8 @@ function Menu:update(dt)
     self.spawnLaser = true
   end
   self.timer = self.timer + dt
+  
+  
 end
 
 function Menu:draw()
@@ -99,6 +103,7 @@ function Menu:draw()
     
     if love.mouse.isDown(1) and select then
       button.f()
+      clickSound:play()
     end
     
     
@@ -125,5 +130,9 @@ function Menu:newButton(text, f)
     last = false
   }
 end
+
+function Menu:getStartgame()
+  return startGame
+  end
 
 return Menu

@@ -6,19 +6,31 @@ local w, h = love.graphics.getDimensions(5)
 local alreadyPlayed = false
 local audio = Audio()
 local font = love.graphics.newFont("pong.ttf", 100)
+local retry = false
+local timer
 
 function Gameover:new()
   self.image = love.graphics.newImage("spr/gameover.jpg")
-  self.timer = 0
   gameoverTrack = audio:getGameover()
+  self.timer = 0
 end
 
 function Gameover:update(dt)
   if (not alreadyPlayed) then
     gameoverTrack:play()
-    alreadyPlayed = true
+    self.alreadyPlayed = true
   end
   
+  if self.timer > 4 then
+    if love.keyboard.isDown ("return") then
+      self.retry = true
+    end
+    
+    if love.keyboard.isDown ("escape") then
+      love.event.quit(0)
+    end
+  end
+
   self.timer = self.timer + dt
 end
 
@@ -31,5 +43,14 @@ function Gameover:draw()
   end
 end
 
+function Gameover:getRetry()
+  return self.retry
+end
+
+function Gameover:setRetry()
+  self.retry = false
+  self.alreadyPlayed = false
+  self.timer = 0
+end
 return Gameover
 
