@@ -1,47 +1,75 @@
 local Object = Object or require "lib.classic"
 local Vector = Vector or require "src/vector"
-local Enemy = Object:extend()
+local Lasers = Lasers or require "src/laser"
+local Marco = Object:extend()
 local w, h = love.graphics.getDimensions()
+local timeRot = 3--= 4
+local timeLasers = 10
+local time = 1000
 
 
-function Enemy:new(image,x,y,time,iscale)
+function Marco:new(image,x,y,scale)
   self.tag = "marco"
   self.position = Vector.new(x or 0, y or 0)
   self.scale = Vector.new(1,1)
-  self.forward = Vector.new(0, 0)
-  self.speed = speed or 30
   self.image = love.graphics.newImage(image or nil)
-  self.iscale = iscale
   self.origin = Vector.new(self.image:getWidth()/2 ,self.image:getHeight()/2)
   self.height = self.image:getHeight()
   self.width  = self.image:getWidth()
+  self.rot = 0
+  self.imageOut = love.graphics.newImage("spr/marco_boca_abierta_con_bordes.png")
+  self.lasers = nil 
   
-  self.iscalec = iscale
-  
-  self.xF = self.position.x
-  self.yF = self.position.y
-  self.xI =  w/2 - minW/2 + self.position.x * minW / w
-  self.yI = h/2 - minH + self.position.y * minH / h
-  self.position.x = self.xI
-  self.position.y = self.yI
-
-  self.forward = Vector.new(self.xF - self.xI, self.yF - self.xI)
-  self.forward:normalize()
-  
-  self.dist = math.sqrt(math.pow(self.xF - self.xI, 2) + math.pow(self.yF - self.yI, 2))
-  self.speed = self.dist/time
-  self.distM = 0 -- distancia recorrida
+  self.timer = 0
+  self.mouthTimer = 0
+  self.closeMouth = true
+  self.spawnLaser = true
+  self.laserDone = false
 end
 
-function Enemy:update(dt)
-  self.position = self.position + self.forward * self.speed * dt
-  
-  self.distM = self.dist - math.sqrt(math.pow(self.xF - self.position.x, 2) + math.pow(self.yF - self.position.y, 2))
-  self.iscale = self.iscalec * (self.distM / self.dist)--cons size/px + trigo
+function Marco:update(dt, actorList)
+  if self.timer < timeRot  then
+    self.rot = self.rot + math.rad(720/timeRot) * dt
+    if self.mouthTimer > 0.3 then
+      i = self.image
+      self.image = self.imageOut
+      self.imageOut = i
+      self.mouthTimer = 0
+    end
+    self.mouthTimer = self.mouthTimer + dt
+  elseif self.lasers ~= nil then
+    if self.lasers.done then
+      self.timer = 0
+      self.closeMouth = true
+      for _,v in ipairs(actorList) do
+        if v.tag == "lasers" then
+          table.remove(actorList, _)
+        end
+      end
+      self.lasers = nil
+    end
+  end
+  if self.closeMouth and self.timer > timeRot then
+    self.image = love.graphics.newImage("spr/marco_con_borde_def.png")
+    self.imageOut = love.graphics.newImage("spr/marco_boca_abierta_con_bordes.png")
+    self.rot = 0
+    self.closeMouth = false
+    self.spawnLaser = true
+  end
+  if self.spawnLaser and self.timer > timeRot then
+    math.randomseed(os.time())
+    for i = 1, math.random(10) do
+      math.random()
+    end
+    self.lasers = Lasers(self.position.x, self.position.y, self.position.x + math.random(-w/2, w/2), self.position.y + math.random(100, h/2), time)
+    table.insert(actorList, self.lasers)
+    self.spawnLaser = false
+  end
+  self.timer = self.timer + dt
 end
 
-function Enemy:draw()
-  love.graphics.draw(self.image, self.position.x, self.position.y, 0, self.iscale, self.iscale, self.origin.x, self.origin.y)
+function Marco:draw()
+  love.graphics.draw(self.image, self.position.x, self.position.y, self.rot, self.iscale, self.iscale, self.origin.x, self.origin.y)
 end
 
-return Enemy
+return Marco
