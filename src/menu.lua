@@ -1,18 +1,21 @@
 local Object = Object or require "lib.classic"
+local Audio = Audio or require "src/audio"
 local Menu = Object:extend()
 local w, h = love.graphics.getDimensions()
 local buttons = {}
 local font
+local audio = Audio()
 
 
 function Menu:new()
   table.insert(buttons, Menu:newButton("Start Game", function() print("Starting game") end))
   table.insert(buttons, Menu:newButton("Scoreboard", function() print("Checking score") end))
   table.insert(buttons, Menu:newButton("Exit", function() love.event.quit(0) end))
+  menuTrack = audio:getMenuTrack()
 end
 
 function Menu:update(dt)
-  
+   menuTrack:play()
 end
 
 function Menu:draw()
