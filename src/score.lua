@@ -10,7 +10,7 @@ function Score:new()
 end
 
 function Score:update(dt)
-  
+  Score:saveCredits()
 end
 
 function Score:draw()

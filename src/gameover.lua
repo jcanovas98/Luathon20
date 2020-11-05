@@ -26,7 +26,6 @@ function Gameover:draw()
   love.graphics.draw(self.image, -130, -50, 0, 1, 1)
   
   if self.timer > 4 then
-    
     love.graphics.print("Press enter to retry", font, w / 3 - 25 , h / 2 + 160, 0, 0.35, 0.35)
     love.graphics.print("Press esc to exit", font, w / 3 , h / 2 + 200, 0, 0.35, 0.35)
   end
