@@ -16,7 +16,7 @@ function Gameover:new()
 end
 
 function Gameover:update(dt)
-  if (not alreadyPlayed) then
+  if (not self.alreadyPlayed) then
     gameoverTrack:play()
     self.alreadyPlayed = true
   end
