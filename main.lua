@@ -7,14 +7,19 @@ local Blast = Blast or require "src/blast"
 local Marco = Marco or require "src/marco"
 local Hud = Hud or require "src/hud"
 local hud = Hud(5)
+local Score = Score or require "src/score"
+local Intro = Intro or require "src/intro"
 local actorList = {}
 
 function love.load(arg)
   if arg[#arg] == "-debug" then require("mobdebug").start() end -- Enable the debugging with ZeroBrane Studio
+ 
+  local intro = Intro("spr/tecnocampusgames.ogv")
+  table.insert(actorList, intro)
   
   local background = Background:extend()
   background:new(100)
-  table.insert(actorList, background)
+  --table.insert(actorList, background)
   
   local marco = Marco("spr/marco_con_borde_def.png", w/2 - 10, h/2, 0.65)
   table.insert(actorList, marco)
