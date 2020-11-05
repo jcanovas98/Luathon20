@@ -24,8 +24,8 @@ math.randomseed(os.time())
 local introTimer = 0
 
 --Game State
-local isIntro = false
-local isMenu = true
+local isIntro = true
+local isMenu = false
 local isPlaying = false
 local isGameover = false
 local isScoreboard = false
