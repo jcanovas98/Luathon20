@@ -19,16 +19,16 @@ function Player:new(image,x,y,speed,iscale)
   self.image = love.graphics.newImage(image or nil)
   self.iscale = iscale
   self.origin = Vector.new(self.image:getWidth()/2 ,self.image:getHeight()/2)
-  self.height = self.image:getHeight()
-  self.width  = self.image:getWidth()
+  self.height = self.image:getHeight() * iscale
+  self.width  = self.image:getWidth() * iscale
   self.timer = 0
+  self.invulnTimer = 0
 end
 
-function Player:update(dt, actorList)
+function Player:update(dt, actorList, hud)
   --Movement
   if love.keyboard.isDown("s") then
     self.forward.y = self.forward.y + 0.1
-    self.image = love.graphics.newImage("spr/xwing1.png")
   elseif love.keyboard.isDown("w") then
     self.forward.y = self.forward.y - 0.1
   else
@@ -39,15 +39,12 @@ function Player:update(dt, actorList)
     elseif self.forward.y < 0 then
       self.forward.y = self.forward.y + 0.2
     end
-    self.image = love.graphics.newImage("spr/xwing2.png")
   end
   
   if love.keyboard.isDown("d") then
     self.forward.x = self.forward.x + 0.1
-        self.image = love.graphics.newImage("spr/xwing3i.png")
   elseif love.keyboard.isDown("a") then
     self.forward.x = self.forward.x - 0.1
-        self.image = love.graphics.newImage("spr/xwing3d.png")
   else
     if self.forward.x < 0.2 and self.forward.x > -0.2 then
       self.forward.x = 0
@@ -80,7 +77,20 @@ function Player:update(dt, actorList)
     self.forward.x = 0
   end
   self.position = self.position + self.forward * self.speed * dt
-  
+  if self.invulnTimer > 1 then 
+    for _,v in ipairs(actorList) do
+      if v.tag == "explosion" then
+        if (((self.position.x + self.width/2 > v.position.x - v.width/2 and self.position.x + self.width/2 < v.position.x + v.width/2) or 
+        (self.position.x - self.width/2 > v.position.x - v.width/2 and self.position.x - self.width/2 < v.position.x + v.width/2)) and
+        ((self.position.y - self.height/2 > v.position.y - v.height/2 and self.position.y - self.height/2 < v.position.y + v.height/2) or 
+        (self.position.y + self.height/2 > v.position.y - v.height/2 and self.position.y + self.height/2 < v.position.y + v.height/2))) then
+          hud.health = hud.health - 1
+          self.invulnTimer = 0
+        end
+      end
+    end
+  end
+  self.invulnTimer = self.invulnTimer + dt
 end
 
 function Player:draw()

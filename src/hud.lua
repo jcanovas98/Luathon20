@@ -18,6 +18,7 @@ function Hud:update(dt)
     self.heartList[self.health + 1] = "spr/heartg.png"
   end
   self.lastHealth = self.health
+  self.score = self.score + dt * 3
 end
 
 function Hud:draw()
@@ -25,7 +26,7 @@ function Hud:draw()
     love.graphics.draw(love.graphics.newImage(self.heartList[i]), 40 + (i - 1) * 100,40,0,0.5,0.5)
   end
   love.graphics.setColor(1, 0.8, 0)
-  love.graphics.print(self.score, w - 400, 40 ,0,1,1)
+  love.graphics.print(math.floor(self.score), w - 400, 40 ,0,1,1)
   love.graphics.setColor(1, 1, 1)
 end
 
