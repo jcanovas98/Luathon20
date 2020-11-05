@@ -13,7 +13,6 @@ local startGame = false
 
 function Menu:new()
   table.insert(buttons, Menu:newButton("Start Game", function() startGame = true end))
-  --table.insert(buttons, Menu:newButton("Scoreboard", function() print("Checking score") end))
   table.insert(buttons, Menu:newButton("Exit", function() love.event.quit(0) end))
   clickSound = audio:getClick()
   

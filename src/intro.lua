@@ -3,7 +3,6 @@ local Intro = Object:extend()
 local w, h = love.graphics.getDimensions()
 
 function Intro:new(source)
-  print(source)
   self.intro = love.graphics.newVideo(source)
   self.intro:play()
 end

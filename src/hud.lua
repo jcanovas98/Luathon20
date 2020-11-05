@@ -21,7 +21,6 @@ function Hud:new(health)
   io.close(f)
 
   loadScore = self.saveGame[1]
-  print(loadScore)
   
   self.heartList = {}
   self.health = health
